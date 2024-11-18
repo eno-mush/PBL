@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.websarva.wings.android.pblapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.websarva.wings.android.pblapp"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
