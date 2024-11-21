@@ -1,58 +1,64 @@
 package com.websarva.wings.android.pblapp
 
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import android.util.Log
+import android.widget.Button
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.google.android.gms.wearable.DataEvent
-import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMapItem
-import com.google.android.gms.wearable.WearableListenerService
-
 
 class MainActivity : AppCompatActivity() {
+
+    // BroadcastReceiver のインスタンス
+    private val myBroadcastReceiver = MyBroadcastReceiver()
+
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
-        val textView:TextView=findViewById(R.id.acceleratetView)
+
+        // ボタン1配置
+        val button1: Button = findViewById(R.id.button1)
+        button1.setOnClickListener {
+            // インテントをブロードキャスト
+            val intent = Intent("com.example.broadcast.MY_NOTIFICATION1")
+            intent.putExtra("data", "Notice me senpai!")
+            Log.d("MainActivity", "Broadcast MY_NOTIFICATION1 sent with data: Notice me senpai!")
+            sendBroadcast(intent)
+        }
+
+        // ボタン2配置
+        val button2: Button = findViewById(R.id.button2)
+        button2.setOnClickListener {
+            // インテントをブロードキャスト
+            val intent = Intent("com.example.broadcast.MY_NOTIFICATION2")
+            intent.putExtra("data", "Hello, world!")
+            Log.d("MainActivity", "Broadcast MY_NOTIFICATION2 sent with data: Hello, world!")
+            sendBroadcast(intent)
+        }
+
+        // BroadcastReceiver の登録
+        val intentFilter = IntentFilter().apply {
+            addAction("com.example.broadcast.MY_NOTIFICATION1")
+            addAction("com.example.broadcast.MY_NOTIFICATION2")
+        }
+        registerReceiver(myBroadcastReceiver, intentFilter, Context.RECEIVER_EXPORTED)
+
+//        registerReceiver(myBroadcastReceiver, intentFilter, RECEIVER_NOT_EXPORTED)
+        Log.d("MainActivity", "BroadcastReceiver registered")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // BroadcastReceiver の解除
+        try {
+            unregisterReceiver(myBroadcastReceiver)
+            Log.d("MainActivity", "BroadcastReceiver unregistered")
+        } catch (e: IllegalArgumentException) {
+            Log.e("MainActivity", "Receiver not registered or already unregistered: ${e.message}")
+        }
     }
 }
-//
-//class DataLayerListenerService : WearableListenerService() {
-//    private var isUIUpdatedOnce = false // UIの更新を一度だけ行うフラグ（確認用）
-//
-//    override fun onCreate() {
-//        super.onCreate()
-//        // サービスが開始されたときに、すべての値を0としてUIを初期化（確認用）
-//        updateUI(0f, 0f, 0f)
-//    }
-//
-//    override fun onDataChanged(dataEvents: DataEventBuffer) {
-//        if (!isUIUpdatedOnce) {//確認用の行
-//            for (dataEvent in dataEvents) {
-//                if (dataEvent.type == DataEvent.TYPE_CHANGED) {
-//                    val dataItem = dataEvent.dataItem
-//                    if (dataItem.uri.path == "/accelerometer") {
-//                        // データを取り出し、スマートフォンの UI に表示
-//                        val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-//                        val sensorX = dataMap.getFloat("sensorX")
-//                        val sensorY = dataMap.getFloat("sensorY")
-//                        val sensorZ = dataMap.getFloat("sensorZ")
-//
-//                        // UI に反映するために必要な処理
-//                        updateUI(sensorX, sensorY, sensorZ)
-//                        isUIUpdatedOnce = true // 一度更新を行ったことを記録（確認用）
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private fun updateUI(sensorX: Float, sensorY: Float, sensorZ: Float) {
-//        // メインアクティビティの UI を更新するコードをここに追加
-//
-//    }
-//}
