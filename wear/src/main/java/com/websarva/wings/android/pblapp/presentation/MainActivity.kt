@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.websarva.wings.android.pblapp.R
+import sendSensorDataToPhone
 
 class MainActivity : ComponentActivity(), SensorEventListener {
 
@@ -54,6 +55,10 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                 // TextView を取得して数値を表示する
                 val startTextView: TextView = findViewById(R.id.startView)
                 startTextView.text = "X: ${sensorX}\nY: ${sensorY}\nZ: ${sensorZ}"
+                val sendingData = "X: ${sensorX}\nY: ${sensorY}\nZ: ${sensorZ}"
+                // モバイルにセンサーデータを送信
+                sendSensorDataToPhone(this, sendingData)
+                Log.d("check data",sendingData)
             }
         }
     }
