@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.websarva.wings.android.pblapp.R
 
+
 class MainActivity : ComponentActivity(), SensorEventListener {
 
     private lateinit var sensorManager: SensorManager
@@ -23,7 +24,7 @@ class MainActivity : ComponentActivity(), SensorEventListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensorManager = getSystemService(SENSOR_SERVICE) as SensorManager
         accSensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
         if (accSensor == null) {
             Log.e("com.websarva.wings.android.pblapp.presentation.MainActivity", "加速度センサーが見つかりません")
@@ -54,6 +55,10 @@ class MainActivity : ComponentActivity(), SensorEventListener {
                 // TextView を取得して数値を表示する
                 val startTextView: TextView = findViewById(R.id.startView)
                 startTextView.text = "X: ${sensorX}\nY: ${sensorY}\nZ: ${sensorZ}"
+                val sendingData = "X: ${sensorX}\nY: ${sensorY}\nZ: ${sensorZ}"
+                // モバイルにセンサーデータを送信
+                sendSensorDataToPhone(this, sendingData)
+                Log.d("check data",sendingData)
             }
         }
     }
